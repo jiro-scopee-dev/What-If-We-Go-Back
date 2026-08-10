@@ -121,7 +121,7 @@ export default function MuseumJourney({ phase, onEnter }: MuseumJourneyProps) {
       cv.style.height = `${window.innerHeight}px`;
     };
 
-    let drawTick = 0;
+    let drawTick = -1;
     const draw = (target: number) => {
       const cv = canvasRef.current;
       const ctx = cv?.getContext("2d");
@@ -180,6 +180,7 @@ export default function MuseumJourney({ phase, onEnter }: MuseumJourneyProps) {
         const o = ph === "journey" ? ramp(p, CTA_STAGE) : ph === "veil" ? 1 : 0;
         ctaRef.current.style.opacity = String(o);
         ctaRef.current.style.transform = ph === "veil" ? "scale(1.05)" : "scale(1)";
+        ctaRef.current.style.pointerEvents = o > 0 ? "auto" : "none";
       }
 
       raf = requestAnimationFrame(loop);
@@ -204,6 +205,19 @@ export default function MuseumJourney({ phase, onEnter }: MuseumJourneyProps) {
   }, []);
 
   const trackOpen = phase !== "gallery";
+
+  useEffect(() => {
+    if (!trackOpen) return;
+    const cv = canvasRef.current;
+    if (cv) {
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.75);
+      cv.width = Math.round(window.innerWidth * dpr);
+      cv.height = Math.round(window.innerHeight * dpr);
+      cv.style.width = `${window.innerWidth}px`;
+      cv.style.height = `${window.innerHeight}px`;
+    }
+    progress.current = scrollProgress();
+  }, [trackOpen]);
 
   return (
     <section
@@ -249,19 +263,20 @@ export default function MuseumJourney({ phase, onEnter }: MuseumJourneyProps) {
             <span className="mono text-[10px] tracking-[0.32em] text-bone/80 md:text-[11px]">MEMORY ARCHIVE</span>
           </motion.div>
 
-          <div ref={hintRef} className="pointer-events-none absolute inset-x-0 bottom-10 z-10 flex flex-col items-center gap-4">
+          <div ref={hintRef} data-hint className="pointer-events-none absolute inset-x-0 bottom-10 z-10 flex flex-col items-center gap-4">
             <p className="mono text-[10px] tracking-[0.42em] text-bone/60 md:text-[11px]">SCROLL TO ENTER</p>
             <div className="hairline-h w-44" />
           </div>
 
           <div className="pointer-events-none absolute bottom-9 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3 md:bottom-12">
             <div className="relative h-px w-44 overflow-hidden bg-bone/15 md:w-56">
-              <div ref={lineRef} className="absolute inset-0 origin-left bg-amber/90" style={{ transform: "scaleX(0)" }} />
+              <div ref={lineRef} data-line className="absolute inset-0 origin-left bg-amber/90" style={{ transform: "scaleX(0)" }} />
             </div>
           </div>
 
           <span
             ref={figRef}
+            data-fig
             className="mono pointer-events-none absolute bottom-9 right-6 z-10 text-[10px] tracking-[0.25em] text-bone/35 md:right-10"
           >
             FIG. 001 / 151
@@ -271,6 +286,7 @@ export default function MuseumJourney({ phase, onEnter }: MuseumJourneyProps) {
             <div
               key={id}
               ref={(el) => register(el, id)}
+              data-stage={id}
               style={{ opacity: 0 }}
               className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center"
             >
@@ -284,6 +300,7 @@ export default function MuseumJourney({ phase, onEnter }: MuseumJourneyProps) {
             ref={ctaRef}
             type="button"
             onClick={onEnter}
+            data-cta
             style={{ opacity: 0 }}
             className="absolute inset-x-0 bottom-[16vh] z-20 flex flex-col items-center gap-5 outline-none transition-[opacity,transform] duration-500 ease-out focus-visible:opacity-100 md:bottom-[20vh]"
             aria-label="See the art pieces — enter the archive"

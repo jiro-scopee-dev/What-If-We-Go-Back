@@ -1,0 +1,67 @@
+
+> what-if-we-go-back@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.18
+  - Local:        http://localhost:3000
+
+ ✓ Starting...
+ ✓ Ready in 4s
+ ✓ Compiled /api/download in 462ms (32 modules)
+ ⨯ TypeError: (0 , archiver__WEBPACK_IMPORTED_MODULE_2__.default) is not a function
+    at GET (webpack-internal:///(rsc)/./app/api/download/route.ts:30:73)
+    at C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:55837
+    at C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\server\lib\trace\tracer.js:140:36
+    at NoopContextManager.with (C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\compiled\@opentelemetry\api\index.js:1:7062)
+    at ContextAPI.with (C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\compiled\@opentelemetry\api\index.js:1:518)
+    at NoopTracer.startActiveSpan (C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\compiled\@opentelemetry\api\index.js:1:18093)
+    at ProxyTracer.startActiveSpan (C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\compiled\@opentelemetry\api\index.js:1:18854)
+    at C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\server\lib\trace\tracer.js:122:103
+    at NoopContextManager.with (C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\compiled\@opentelemetry\api\index.js:1:7062)
+    at ContextAPI.with (C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\compiled\@opentelemetry\api\index.js:1:518)
+    at NextTracerImpl.trace (C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\server\lib\trace\tracer.js:122:28)
+    at C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:48572
+    at AsyncLocalStorage.run (node:internal/async_local_storage/async_context_frame:63:14)
+    at Object.wrap (C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:40957)
+    at C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:47148
+    at AsyncLocalStorage.run (node:internal/async_local_storage/async_context_frame:63:14)
+    at Object.wrap (C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:38292)
+    at C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:47110
+    at AsyncLocalStorage.run (node:internal/async_local_storage/async_context_frame:63:14)
+    at eO.execute (C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:46557)
+    at eO.handle (C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:57176)
+    at doRender (C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\server\base-server.js:1353:60)
+    at cacheEntry.responseCache.get.routeKind (C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\server\base-server.js:1575:34)
+    at ResponseCache.get (C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\server\response-cache\index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\server\base-server.js:1483:53)
+    at C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\server\base-server.js:1003:121
+    at NextTracerImpl.trace (C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\server\lib\trace\tracer.js:105:20)
+    at DevServer.renderToResponseWithComponents (C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\server\base-server.js:1003:41)
+    at DevServer.renderPageComponent (C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\server\base-server.js:1911:35)
+    at async DevServer.renderToResponseImpl (C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\server\base-server.js:1949:32)
+    at async DevServer.pipeImpl (C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\server\base-server.js:921:25)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\server\next-server.js:272:17)
+    at async DevServer.handleRequestImpl (C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\server\base-server.js:817:17)
+    at async C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\server\dev\next-dev-server.js:339:20
+    at async Span.traceAsyncFn (C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\trace\trace.js:154:20)
+    at async DevServer.handleRequest (C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\server\dev\next-dev-server.js:336:24)
+    at async invokeRender (C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\server\lib\router-server.js:173:21)
+    at async handleRequest (C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\server\lib\router-server.js:350:24)
+    at async requestHandlerImpl (C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\server\lib\router-server.js:374:13)
+    at async Server.requestListener (C:\Users\Jiro\Documents\What-If-We-Go-Back\node_modules\next\dist\server\lib\start-server.js:141:13)
+ GET /api/download?ids=1,2,3 500 in 1465ms
+ ✓ Compiled in 58ms
+ ✓ Compiled /api/download in 138ms (32 modules)
+ GET /api/download?ids=1,2,3 200 in 303ms
+ GET /api/download?ids=1,2,3 200 in 38ms
+ ○ Compiling / ...
+The user aborted a request.
+
+Retrying 1/3...
+ ✓ Compiled / in 20.3s (1213 modules)
+ GET / 200 in 20664ms
+ ✓ Compiled in 580ms (1186 modules)
+ ✓ Compiled in 419ms (1186 modules)
+ GET / 200 in 202ms
+ GET / 200 in 148ms
+ GET / 200 in 34ms

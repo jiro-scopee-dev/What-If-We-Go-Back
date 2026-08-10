@@ -39,6 +39,6 @@ export const STAGES: StageDef[] = [
 
 export function frameFromProgress(p: number, total = 151): number {
   const t = Math.min(1, p / 0.92);
-  const e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const e = -(Math.cos(Math.PI * t) - 1) / 2;
   return Math.round(e * (total - 1));
 }

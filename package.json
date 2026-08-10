@@ -10,6 +10,7 @@
     "assets": "node scripts/prepare-images.mjs"
   },
   "dependencies": {
+    "archiver": "^8.0.0",
     "framer-motion": "^11.11.17",
     "next": "14.2.18",
     "react": "^18.3.1",
@@ -22,6 +23,7 @@
     "autoprefixer": "^10.4.20",
     "eslint": "^8.57.1",
     "eslint-config-next": "14.2.18",
+    "playwright": "^1.62.1",
     "postcss": "^8.4.47",
     "sharp": "^0.33.5",
     "tailwindcss": "^3.4.13",

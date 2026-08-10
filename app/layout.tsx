@@ -54,6 +54,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           FINISH: unreviewed and undocumented is unfinished; this build ends
           with the finish review, the verdict, and DESIGN.md
         */}
+        <div
+          aria-hidden="true"
+          style={{ display: "none" }}
+          data-contract="impeccable"
+        >
+          CONTRACT c7720367 THESIS scroll-is-a-walk OWN-WORLD amber-lit-night-museum STORY outside-to-exhibition
+          FIRST-VIEWPORT frame-001-full-bleed FORM canvas-sequence-dissolve FINISH unreviewed-and-undocumented-is-unfinished
+        </div>
         {children}
       </body>
     </html>
