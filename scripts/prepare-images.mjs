@@ -15,9 +15,12 @@ const pad = (n) => String(n).padStart(3, "0");
 
 function copyFrames() {
   fs.mkdirSync(dstMuseum, { recursive: true });
+  for (const stale of fs.readdirSync(dstMuseum).filter((f) => f.endsWith(".jpg"))) {
+    fs.rmSync(path.join(dstMuseum, stale), { force: true });
+  }
   const frames = fs
     .readdirSync(srcMuseum)
-    .filter((f) => /^ezgif-frame-\d{3}\.jpg$/.test(f))
+    .filter((f) => /^ezgif-frame-\d{3}\.png$/.test(f))
     .sort();
   let copied = 0;
   for (const f of frames) {

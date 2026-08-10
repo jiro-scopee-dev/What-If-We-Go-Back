@@ -65,3 +65,8 @@ Retrying 1/3...
  GET / 200 in 202ms
  GET / 200 in 148ms
  GET / 200 in 34ms
+ ✓ Compiled in 1944ms (1186 modules)
+ ✓ Compiled in 771ms (603 modules)
+ GET / 200 in 238ms
+ GET / 200 in 40ms
+ ✓ Compiled in 1262ms (1186 modules)

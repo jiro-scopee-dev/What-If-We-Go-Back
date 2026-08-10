@@ -224,24 +224,24 @@ export default function Corridor({ onBack }: CorridorProps) {
       <button
         type="button"
         onClick={() => step(-1)}
-        aria-label="Walk left to the previous memory"
-        className="mono absolute left-3 top-1/2 z-20 flex -translate-y-1/2 flex-col items-center gap-3 text-[10px] tracking-[0.32em] text-bone/60 transition-colors duration-300 hover:text-amber md:left-8"
+        aria-label="Previous photo"
+        className="mono absolute left-4 top-1/2 z-20 flex -translate-y-1/2 flex-col items-center gap-3 border border-bone/25 bg-ink/50 px-4 py-5 text-[10px] tracking-[0.3em] text-bone/70 backdrop-blur-sm transition-colors duration-300 hover:border-amber/60 hover:text-amber md:left-8 md:px-5"
       >
         <span className="text-2xl leading-none" aria-hidden="true">
           ◂
         </span>
-        <span className="hidden md:inline">WALK</span>
+        <span>PREV</span>
       </button>
       <button
         type="button"
         onClick={() => step(1)}
-        aria-label="Walk right to the next memory"
-        className="mono absolute right-3 top-1/2 z-20 flex -translate-y-1/2 flex-col items-center gap-3 text-[10px] tracking-[0.32em] text-bone/60 transition-colors duration-300 hover:text-amber md:right-8"
+        aria-label="Next photo"
+        className="mono absolute right-4 top-1/2 z-20 flex -translate-y-1/2 flex-col items-center gap-3 border border-bone/25 bg-ink/50 px-4 py-5 text-[10px] tracking-[0.3em] text-bone/70 backdrop-blur-sm transition-colors duration-300 hover:border-amber/60 hover:text-amber md:right-8 md:px-5"
       >
         <span className="text-2xl leading-none" aria-hidden="true">
           ▸
         </span>
-        <span className="hidden md:inline">WALK</span>
+        <span>NEXT</span>
       </button>
 
       <footer className="absolute inset-x-0 bottom-0 z-20 flex items-center justify-between px-6 py-6 md:px-10 md:py-8">
