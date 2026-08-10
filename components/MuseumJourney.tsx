@@ -9,7 +9,7 @@ const FRAME_COUNT = 151;
 const TRACK_VH = 5.5;
 
 const pad = (n: number) => String(n).padStart(3, "0");
-const frameSrc = (i: number) => `/museum/ezgif-frame-${pad(i + 1)}.png`;
+const frameSrc = (i: number) => `/museum/ezgif-frame-${pad(i + 1)}.webp`;
 
 const CONTENT: Record<string, string> = {
   somewhere: "Somewhere between then and now…",

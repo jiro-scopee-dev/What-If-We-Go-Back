@@ -13,24 +13,27 @@ const dstLarge = path.join(root, "public", "image", "large");
 
 const pad = (n) => String(n).padStart(3, "0");
 
-function copyFrames() {
+async function processFrames() {
   fs.mkdirSync(dstMuseum, { recursive: true });
-  for (const stale of fs.readdirSync(dstMuseum).filter((f) => f.endsWith(".jpg"))) {
+  for (const stale of fs.readdirSync(dstMuseum).filter((f) => !f.endsWith(".webp"))) {
     fs.rmSync(path.join(dstMuseum, stale), { force: true });
   }
   const frames = fs
     .readdirSync(srcMuseum)
     .filter((f) => /^ezgif-frame-\d{3}\.png$/.test(f))
     .sort();
-  let copied = 0;
+  let done = 0;
   for (const f of frames) {
-    const dst = path.join(dstMuseum, f);
+    const dst = path.join(dstMuseum, f.replace(/\.png$/, ".webp"));
     if (!fs.existsSync(dst)) {
-      fs.copyFileSync(path.join(srcMuseum, f), dst);
-      copied++;
+      await sharp(path.join(srcMuseum, f))
+        .resize({ width: 2560, withoutEnlargement: true })
+        .webp({ quality: 95 })
+        .toFile(dst);
     }
+    done++;
   }
-  console.log(`museum frames: ${frames.length} total, ${copied} copied`);
+  console.log(`museum frames: ${frames.length} total, ${done} checked`);
 }
 
 async function processImages() {
@@ -70,5 +73,5 @@ async function processImages() {
   console.log("image processing complete");
 }
 
-copyFrames();
+await processFrames();
 await processImages();
