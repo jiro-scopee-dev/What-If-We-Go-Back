@@ -1,12 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { STAGES, CTA_STAGE, ramp, frameFromProgress } from "@/lib/stages";
+import { STAGES, ramp, frameFromProgress } from "@/lib/stages";
 import type { Phase } from "@/lib/types";
 
 const FRAME_COUNT = 151;
-const TRACK_VH = 5.5;
+const WALK_MS = 6500;
 
 const pad = (n: number) => String(n).padStart(3, "0");
 const frameSrc = (i: number) => `/museum/ezgif-frame-${pad(i + 1)}.webp`;
@@ -51,11 +51,6 @@ const COPY_STAGES: { id: string; inner: string }[] = [
   { id: "oneMoreTime", inner: "translate-y-24 text-center font-serif text-xl italic text-bone/80 md:text-2xl" },
 ];
 
-function scrollProgress() {
-  const scrollable = TRACK_VH * window.innerHeight - window.innerHeight;
-  return Math.min(1, Math.max(0, window.scrollY / scrollable));
-}
-
 interface MuseumJourneyProps {
   phase: Phase;
   onEnter: () => void;
@@ -64,22 +59,33 @@ interface MuseumJourneyProps {
 export default function MuseumJourney({ phase, onEnter }: MuseumJourneyProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const stageEls = useRef(new Map<string, HTMLElement>());
-  const ctaRef = useRef<HTMLButtonElement>(null);
   const hintRef = useRef<HTMLDivElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
   const figRef = useRef<HTMLSpanElement>(null);
   const frames = useRef<(HTMLImageElement | null)[]>([]);
   const progress = useRef(0);
   const phaseRef = useRef(phase);
+  const playingRef = useRef(false);
+  const completedRef = useRef(false);
+  const startRef = useRef(0);
   const reduced = useReducedMotion();
   const reducedRef = useRef(reduced);
   reducedRef.current = reduced;
 
   phaseRef.current = phase;
 
+  const [playing, setPlaying] = useState(false);
+
   const register = useCallback((el: HTMLElement | null, id: string) => {
     if (el) stageEls.current.set(id, el);
     else stageEls.current.delete(id);
+  }, []);
+
+  const startWalk = useCallback(() => {
+    if (playingRef.current || phaseRef.current !== "journey") return;
+    playingRef.current = true;
+    setPlaying(true);
+    startRef.current = performance.now();
   }, []);
 
   useEffect(() => {
@@ -144,6 +150,13 @@ export default function MuseumJourney({ phase, onEnter }: MuseumJourneyProps) {
     let raf = 0;
     let tick = 0;
     const loop = () => {
+      if (playingRef.current && !completedRef.current) {
+        progress.current = Math.min(1, (performance.now() - startRef.current) / WALK_MS);
+        if (progress.current >= 1) {
+          completedRef.current = true;
+          onEnter();
+        }
+      }
       const p = progress.current;
       const target = frameFromProgress(p);
       ensureWindow(target);
@@ -171,38 +184,26 @@ export default function MuseumJourney({ phase, onEnter }: MuseumJourneyProps) {
       });
 
       if (hintRef.current) {
-        hintRef.current.style.opacity = String(1 - ramp(p, { id: "hint", start: 0, rise: 0.05, fall: 0.09, gone: 0.13 }));
+        hintRef.current.style.opacity =
+          phaseRef.current === "journey" && !playingRef.current ? "1" : "0";
       }
       if (lineRef.current) lineRef.current.style.transform = `scaleX(${p.toFixed(4)})`;
       if (figRef.current) figRef.current.textContent = `FIG. ${pad(target + 1)} / ${FRAME_COUNT}`;
-      if (ctaRef.current) {
-        const ph = phaseRef.current;
-        const o = ph === "journey" ? ramp(p, CTA_STAGE) : ph === "veil" ? 1 : 0;
-        ctaRef.current.style.opacity = String(o);
-        ctaRef.current.style.transform = ph === "veil" ? "scale(1.05)" : "scale(1)";
-        ctaRef.current.style.pointerEvents = o > 0 ? "auto" : "none";
-      }
 
       raf = requestAnimationFrame(loop);
     };
 
-    const onScroll = () => {
-      progress.current = scrollProgress();
-    };
     const onResize = () => sizeCanvas();
 
     ensure(0);
     sizeCanvas();
-    onScroll();
     raf = requestAnimationFrame(loop);
-    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize);
     return () => {
       cancelAnimationFrame(raf);
-      window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
     };
-  }, []);
+  }, [onEnter]);
 
   const trackOpen = phase !== "gallery";
 
@@ -216,17 +217,22 @@ export default function MuseumJourney({ phase, onEnter }: MuseumJourneyProps) {
       cv.style.width = `${window.innerWidth}px`;
       cv.style.height = `${window.innerHeight}px`;
     }
-    progress.current = scrollProgress();
+    progress.current = 0;
+    playingRef.current = false;
+    completedRef.current = false;
+    setPlaying(false);
   }, [trackOpen]);
+
+  const doorVisible = phase === "journey" && !playing;
 
   return (
     <section
       aria-label="Entering the Museum"
-      className="relative w-full"
-      style={{ height: trackOpen ? `${TRACK_VH * 100}vh` : "0px" }}
+      className="fixed inset-0 z-10"
+      style={{ display: trackOpen ? "block" : "none" }}
     >
       {trackOpen && (
-        <div className="fixed inset-0 z-10 overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden">
           <motion.div
             className="absolute inset-0"
             initial={false}
@@ -263,8 +269,12 @@ export default function MuseumJourney({ phase, onEnter }: MuseumJourneyProps) {
             <span className="mono text-[10px] tracking-[0.32em] text-bone/80 md:text-[11px]">MEMORY ARCHIVE</span>
           </motion.div>
 
-          <div ref={hintRef} data-hint className="pointer-events-none absolute inset-x-0 bottom-10 z-10 flex flex-col items-center gap-4">
-            <p className="mono text-[10px] tracking-[0.42em] text-bone/60 md:text-[11px]">SCROLL TO ENTER</p>
+          <div
+            ref={hintRef}
+            data-hint
+            className="pointer-events-none absolute inset-x-0 bottom-10 z-10 flex flex-col items-center gap-4 transition-opacity duration-500"
+          >
+            <p className="mono text-[10px] tracking-[0.42em] text-bone/60 md:text-[11px]">CLICK THE DOOR TO ENTER</p>
             <div className="hairline-h w-44" />
           </div>
 
@@ -297,36 +307,40 @@ export default function MuseumJourney({ phase, onEnter }: MuseumJourneyProps) {
           ))}
 
           <button
-            ref={ctaRef}
             type="button"
-            onClick={onEnter}
-            data-cta
-            style={{ opacity: 0 }}
-            className="absolute inset-x-0 bottom-[16vh] z-20 flex flex-col items-center gap-5 outline-none transition-[opacity,transform] duration-500 ease-out focus-visible:opacity-100 md:bottom-[20vh]"
-            aria-label="See the art pieces — enter the archive"
+            onClick={startWalk}
+            data-door
+            aria-label="Enter the museum through the door"
+            className={`door-btn absolute left-[51%] top-[60%] z-20 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center outline-none transition-opacity duration-500 focus-visible:opacity-100 ${
+              doorVisible ? "opacity-100" : "pointer-events-none opacity-0"
+            }`}
           >
-            <span className="inline-flex items-center justify-center border border-amber/60 px-12 py-5 transition-colors duration-500 hover:bg-amber/10 md:px-16">
-              <span className="mono text-base tracking-[0.34em] text-bone md:text-lg">SEE ARTPIECES</span>
+            <span
+              aria-hidden="true"
+              className="door-glow absolute -inset-x-10 -inset-y-12"
+            />
+            <span aria-hidden="true" className="door-arch-frame relative" />
+            <span className="mono mt-5 flex items-center gap-2.5 text-[10px] tracking-[0.4em] text-bone/70 md:text-[11px]">
+              <span className="door-tick h-1.5 w-1.5 animate-pulse rounded-full bg-amber" />
+              ENTER
             </span>
-            <span className="mono text-[10px] tracking-[0.4em] text-bone/55 md:text-[11px]">ENTER THE ARCHIVE</span>
           </button>
 
           <div className="sr-only">
-            A scroll-controlled walk into a museum of memories: standing outside, approaching the doors, entering,
-            and arriving at the exhibition inside.
+            A museum of memories: standing outside, a glowing door waits. Click it to walk
+            through the doors and arrive at the exhibition inside.
+          </div>
+          <div className="sr-only" aria-hidden="true">
+            <p>Somewhere between then and now…</p>
+            <p>There are places we remember… Not because they were extraordinary. But because we were.</p>
+            <p>Junior High. A place we once thought we&apos;d never leave.</p>
+            <p>We didn&apos;t know we were making memories. We were just living them.</p>
+            <p>The classrooms. The laughter. The people beside us. The ordinary days. The moments that felt ordinary…
+              until they became memories.</p>
+            <p>And somehow… WE WANT TO GO BACK. Just one more time.</p>
           </div>
         </div>
       )}
-
-      <div className="sr-only" aria-hidden="true">
-        <p>Somewhere between then and now…</p>
-        <p>There are places we remember… Not because they were extraordinary. But because we were.</p>
-        <p>Junior High. A place we once thought we&apos;d never leave.</p>
-        <p>We didn&apos;t know we were making memories. We were just living them.</p>
-        <p>The classrooms. The laughter. The people beside us. The ordinary days. The moments that felt ordinary…
-          until they became memories.</p>
-        <p>And somehow… WE WANT TO GO BACK. Just one more time.</p>
-      </div>
     </section>
   );
 }
