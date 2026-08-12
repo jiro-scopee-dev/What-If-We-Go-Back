@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { EASE_MUSEUM } from "@/lib/motion";
 import { STAGES, ramp, frameFromProgress } from "@/lib/stages";
 import type { Phase } from "@/lib/types";
 
@@ -59,7 +60,6 @@ interface MuseumJourneyProps {
 export default function MuseumJourney({ phase, onEnter }: MuseumJourneyProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const stageEls = useRef(new Map<string, HTMLElement>());
-  const hintRef = useRef<HTMLDivElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
   const figRef = useRef<HTMLSpanElement>(null);
   const frames = useRef<(HTMLImageElement | null)[]>([]);
@@ -183,10 +183,6 @@ export default function MuseumJourney({ phase, onEnter }: MuseumJourneyProps) {
         }
       });
 
-      if (hintRef.current) {
-        hintRef.current.style.opacity =
-          phaseRef.current === "journey" && !playingRef.current ? "1" : "0";
-      }
       if (lineRef.current) lineRef.current.style.transform = `scaleX(${p.toFixed(4)})`;
       if (figRef.current) figRef.current.textContent = `FIG. ${pad(target + 1)} / ${FRAME_COUNT}`;
 
@@ -223,7 +219,7 @@ export default function MuseumJourney({ phase, onEnter }: MuseumJourneyProps) {
     setPlaying(false);
   }, [trackOpen]);
 
-  const doorVisible = phase === "journey" && !playing;
+  const ctaVisible = phase === "journey" && !playing;
 
   return (
     <section
@@ -238,10 +234,14 @@ export default function MuseumJourney({ phase, onEnter }: MuseumJourneyProps) {
             initial={false}
             animate={
               phase === "dissolve"
-                ? { opacity: 0, scale: 1.05, filter: "blur(10px)" }
-                : { opacity: 1, scale: 1, filter: "blur(0px)" }
+                ? reduced
+                  ? { opacity: 0 }
+                  : { opacity: 0, scale: 1.05, filter: "blur(10px)" }
+                : reduced
+                  ? { opacity: 1 }
+                  : { opacity: 1, scale: 1, filter: "blur(0px)" }
             }
-            transition={{ duration: phase === "dissolve" ? 1.1 : 0.6, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: phase === "dissolve" ? 1.1 : 0.6, ease: EASE_MUSEUM }}
           >
             <canvas ref={canvasRef} className="block h-full w-full" aria-hidden="true" />
           </motion.div>
@@ -268,15 +268,6 @@ export default function MuseumJourney({ phase, onEnter }: MuseumJourneyProps) {
             <span className="h-1.5 w-1.5 bg-amber" aria-hidden="true" />
             <span className="mono text-[10px] tracking-[0.32em] text-bone/80 md:text-[11px]">MEMORY ARCHIVE</span>
           </motion.div>
-
-          <div
-            ref={hintRef}
-            data-hint
-            className="pointer-events-none absolute inset-x-0 bottom-10 z-10 flex flex-col items-center gap-4 transition-opacity duration-500"
-          >
-            <p className="mono text-[10px] tracking-[0.42em] text-bone/60 md:text-[11px]">CLICK THE DOOR TO ENTER</p>
-            <div className="hairline-h w-44" />
-          </div>
 
           <div className="pointer-events-none absolute bottom-9 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3 md:bottom-12">
             <div className="relative h-px w-44 overflow-hidden bg-bone/15 md:w-56">
@@ -309,26 +300,18 @@ export default function MuseumJourney({ phase, onEnter }: MuseumJourneyProps) {
           <button
             type="button"
             onClick={startWalk}
-            data-door
-            aria-label="Enter the museum through the door"
-            className={`door-btn absolute left-[51%] top-[60%] z-20 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center outline-none transition-opacity duration-500 focus-visible:opacity-100 ${
-              doorVisible ? "opacity-100" : "pointer-events-none opacity-0"
+            data-cta
+            aria-label="Enter the museum"
+            className={`absolute right-6 top-1/2 z-20 -translate-y-1/2 border border-amber/60 bg-ink/40 px-8 py-5 text-left outline-none backdrop-blur-[2px] transition-[transform,opacity,border-color,background-color] duration-300 ease-out focus-visible:border-amber hover:border-amber hover:bg-amber/10 active:scale-[0.97] md:right-12 md:px-10 ${
+              ctaVisible ? "opacity-100" : "pointer-events-none opacity-0"
             }`}
           >
-            <span
-              aria-hidden="true"
-              className="door-glow absolute -inset-x-10 -inset-y-12"
-            />
-            <span aria-hidden="true" className="door-arch-frame relative" />
-            <span className="mono mt-5 flex items-center gap-2.5 text-[10px] tracking-[0.4em] text-bone/70 md:text-[11px]">
-              <span className="door-tick h-1.5 w-1.5 animate-pulse rounded-full bg-amber" />
-              ENTER
-            </span>
+            <span className="mono text-sm tracking-[0.34em] text-bone md:text-base">ENTER THE MUSEUM</span>
           </button>
 
           <div className="sr-only">
-            A museum of memories: standing outside, a glowing door waits. Click it to walk
-            through the doors and arrive at the exhibition inside.
+            A museum of memories. Press ENTER THE MUSEUM to walk through the doors and
+            arrive at the exhibition inside.
           </div>
           <div className="sr-only" aria-hidden="true">
             <p>Somewhere between then and now…</p>

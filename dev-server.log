@@ -6,7 +6,43 @@
   - Local:        http://localhost:3000
 
  ✓ Starting...
- ✓ Ready in 4.5s
+ ✓ Ready in 2.4s
  ○ Compiling / ...
- ✓ Compiled / in 10.8s (1204 modules)
- GET / 200 in 11391ms
+ ✓ Compiled / in 2.2s (1172 modules)
+ GET / 200 in 2513ms
+ GET / 200 in 62ms
+ ✓ Compiled in 3s (1186 modules)
+ ✓ Compiled in 1071ms (1186 modules)
+ ✓ Compiled in 311ms (1186 modules)
+ ✓ Compiled in 516ms (1186 modules)
+ GET / 200 in 127ms
+ GET / 200 in 45ms
+ ✓ Compiled in 696ms (1186 modules)
+ ✓ Compiled in 388ms (1186 modules)
+ ✓ Compiled in 462ms (1186 modules)
+ ✓ Compiled in 447ms (1186 modules)
+ ✓ Compiled in 410ms (1186 modules)
+ ✓ Compiled in 528ms (1186 modules)
+ ✓ Compiled in 1062ms (1186 modules)
+ ✓ Compiled in 802ms (1186 modules)
+ ✓ Compiled in 922ms (1186 modules)
+ ✓ Compiled in 760ms (1186 modules)
+ ✓ Compiled in 512ms (1186 modules)
+ ✓ Compiled in 575ms (1186 modules)
+ ✓ Compiled in 424ms (1186 modules)
+ ✓ Compiled in 483ms (1186 modules)
+ ✓ Compiled in 362ms (1186 modules)
+ ✓ Compiled in 497ms (1186 modules)
+ ✓ Compiled in 450ms (1186 modules)
+ ✓ Compiled in 249ms (1186 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET / 200 in 459ms
+ GET / 200 in 77ms
+ ✓ Compiled in 348ms (1188 modules)
+ ✓ Compiled in 295ms (1188 modules)
+ ✓ Compiled in 339ms (1188 modules)
+ ✓ Compiled in 407ms (1188 modules)
+ ✓ Compiled in 365ms (1188 modules)
+ ✓ Compiled in 273ms (1188 modules)
+ GET / 200 in 146ms

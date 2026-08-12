@@ -45,6 +45,8 @@ Cover-fit crop on all viewports (16:9 source). Grid: 2 → 3 → 4 columns. Text
 
 Canvas is `aria-hidden` with an sr-only narrative; CTA is a labeled button; lightbox is `role="dialog"`/`aria-modal` with Esc and body scroll lock; piece thumbs carry `alt`; stage copy has its own sr-only block. Text shadows and bottom/top veils keep contrast over any frame.
 
+**Focus visibility** — every interactive control shows an amber focus ring: bordered buttons `focus-visible:border-amber`, text-only buttons `focus-visible:text-amber` (CTA pattern, `MuseumJourney.tsx`; applied to all corridor controls in `Corridor.tsx`).
+
 ## Notes
 
 - Assets: `/public/museum` (copied frames) and `/public/image/{thumbs,large}` (sharp-generated webp) are build artifacts — regenerate with `npm run assets`; originals stay in `/museum` and `/image`.

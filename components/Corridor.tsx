@@ -4,12 +4,12 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import { EASE_MUSEUM } from "@/lib/motion";
 import { PIECE_COUNT, PIECE_LARGE } from "@/lib/pieces";
 
 const pad = (n: number) => String(n).padStart(3, "0");
 const LOOP_RESET = PIECE_COUNT * 2;
 const TICK_MS = 3500;
-const EASE = [0.22, 1, 0.36, 1] as const;
 
 function windowSize(width: number) {
   if (width >= 1536) return 10;
@@ -31,6 +31,7 @@ export default function Corridor({ onBack }: CorridorProps) {
   const [frameW, setFrameW] = useState(0);
   const [pinned, setPinned] = useState<ReadonlySet<number>>(() => new Set());
   const [busy, setBusy] = useState(false);
+  const [instant, setInstant] = useState(false);
 
   useEffect(() => {
     const measure = () => {
@@ -56,7 +57,10 @@ export default function Corridor({ onBack }: CorridorProps) {
   const startTicker = useCallback(() => {
     if (tickRef.current) clearInterval(tickRef.current);
     tickRef.current = setInterval(() => {
-      if (!pausedRef.current) advance(1);
+      if (!pausedRef.current) {
+        setInstant(false);
+        advance(1);
+      }
     }, TICK_MS);
   }, [advance]);
 
@@ -68,7 +72,8 @@ export default function Corridor({ onBack }: CorridorProps) {
   }, [startTicker]);
 
   const step = useCallback(
-    (delta: number) => {
+    (delta: number, instant = false) => {
+      setInstant(instant);
       advance(delta);
       startTicker();
     },
@@ -77,8 +82,8 @@ export default function Corridor({ onBack }: CorridorProps) {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft") step(-1);
-      if (e.key === "ArrowRight") step(1);
+      if (e.key === "ArrowLeft") step(-1, true);
+      if (e.key === "ArrowRight") step(1, true);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -153,7 +158,7 @@ export default function Corridor({ onBack }: CorridorProps) {
         <button
           type="button"
           onClick={onBack}
-          className="mono text-[10px] tracking-[0.4em] text-bone/55 transition-colors duration-300 hover:text-amber md:text-[11px]"
+          className="mono text-[10px] tracking-[0.4em] text-bone/55 transition-[transform,color] duration-150 ease-out hover:text-amber focus-visible:text-amber active:scale-[0.97] md:text-[11px]"
         >
           WALK BACK OUT
         </button>
@@ -170,13 +175,13 @@ export default function Corridor({ onBack }: CorridorProps) {
                 key={li}
                 initial={false}
                 animate={{ x: off * frameW }}
-                transition={{ type: "tween", duration: 0.75, ease: EASE }}
+                transition={{ type: "tween", duration: instant ? 0.15 : 0.75, ease: instant ? "easeOut" : EASE_MUSEUM }}
                 className="absolute left-0 top-0 flex h-full flex-col items-center justify-center"
                 style={{ width: frameW, zIndex: isFocus ? 20 : 10 }}
               >
                 <motion.div
                   animate={{ scale: isFocus ? 1.1 : 0.92 }}
-                  transition={{ type: "tween", duration: 0.5, ease: EASE }}
+                  transition={{ type: "tween", duration: instant ? 0.15 : 0.5, ease: instant ? "easeOut" : EASE_MUSEUM }}
                   className="relative flex h-full w-full flex-col items-center justify-center"
                 >
                   <div className="relative w-[76%]">
@@ -200,10 +205,10 @@ export default function Corridor({ onBack }: CorridorProps) {
                           ? `Unpin memory Nº ${pad(idx + 1)}`
                           : `Pin memory Nº ${pad(idx + 1)}`
                       }
-                      className={`mono absolute -top-3 right-1 z-30 flex items-center gap-1 border px-2 py-1 text-[9px] tracking-[0.22em] transition-colors duration-300 md:right-2 md:text-[10px] ${
+                      className={`mono absolute -top-3 right-1 z-30 flex items-center gap-1 border px-2 py-1 text-[9px] tracking-[0.22em] transition-[transform,border-color,background-color,color] duration-150 ease-out active:scale-[0.97] md:right-2 md:text-[10px] ${
                         pinned.has(idx)
                           ? "border-amber bg-amber/15 text-amber"
-                          : "border-bone/25 bg-ink/60 text-bone/70 hover:border-amber/60 hover:text-amber"
+                          : "border-bone/25 bg-ink/60 text-bone/70 hover:border-amber/60 hover:text-amber focus-visible:border-amber"
                       }`}
                     >
                       <span aria-hidden="true">PIN</span>
@@ -225,7 +230,7 @@ export default function Corridor({ onBack }: CorridorProps) {
         type="button"
         onClick={() => step(-1)}
         aria-label="Previous photo"
-        className="mono absolute left-4 top-1/2 z-20 flex -translate-y-1/2 flex-col items-center gap-3 border border-bone/25 bg-ink/50 px-4 py-5 text-[10px] tracking-[0.3em] text-bone/70 backdrop-blur-sm transition-colors duration-300 hover:border-amber/60 hover:text-amber md:left-8 md:px-5"
+        className="mono absolute left-4 top-1/2 z-20 flex -translate-y-1/2 flex-col items-center gap-3 border border-bone/25 bg-ink/50 px-4 py-5 text-[10px] tracking-[0.3em] text-bone/70 backdrop-blur-sm transition-[transform,border-color,background-color,color] duration-150 ease-out active:scale-[0.97] hover:border-amber/60 hover:text-amber focus-visible:border-amber md:left-8 md:px-5"
       >
         <span className="text-2xl leading-none" aria-hidden="true">
           ◂
@@ -236,7 +241,7 @@ export default function Corridor({ onBack }: CorridorProps) {
         type="button"
         onClick={() => step(1)}
         aria-label="Next photo"
-        className="mono absolute right-4 top-1/2 z-20 flex -translate-y-1/2 flex-col items-center gap-3 border border-bone/25 bg-ink/50 px-4 py-5 text-[10px] tracking-[0.3em] text-bone/70 backdrop-blur-sm transition-colors duration-300 hover:border-amber/60 hover:text-amber md:right-8 md:px-5"
+        className="mono absolute right-4 top-1/2 z-20 flex -translate-y-1/2 flex-col items-center gap-3 border border-bone/25 bg-ink/50 px-4 py-5 text-[10px] tracking-[0.3em] text-bone/70 backdrop-blur-sm transition-[transform,border-color,background-color,color] duration-150 ease-out active:scale-[0.97] hover:border-amber/60 hover:text-amber focus-visible:border-amber md:right-8 md:px-5"
       >
         <span className="text-2xl leading-none" aria-hidden="true">
           ▸
@@ -252,7 +257,7 @@ export default function Corridor({ onBack }: CorridorProps) {
           type="button"
           onClick={download}
           disabled={pinned.size === 0 || busy}
-          className="mono inline-flex items-center gap-3 border border-amber/60 px-6 py-3 text-[10px] tracking-[0.3em] text-bone transition-colors duration-300 hover:bg-amber/10 disabled:cursor-not-allowed disabled:border-bone/20 disabled:text-bone/30 md:px-8 md:text-[11px]"
+          className="mono inline-flex items-center gap-3 border border-amber/60 px-6 py-3 text-[10px] tracking-[0.3em] text-bone transition-[transform,border-color,background-color,color] duration-150 ease-out active:scale-[0.97] hover:bg-amber/10 focus-visible:border-amber disabled:cursor-not-allowed disabled:border-bone/20 disabled:text-bone/30 md:px-8 md:text-[11px]"
         >
           {busy ? "PACKING…" : `DOWNLOAD PINNED (${pinned.size})`}
         </button>
@@ -260,7 +265,7 @@ export default function Corridor({ onBack }: CorridorProps) {
           <button
             type="button"
             onClick={() => setPinned(new Set())}
-            className="mono text-[10px] tracking-[0.3em] text-bone/40 transition-colors duration-300 hover:text-amber md:text-[11px]"
+            className="mono text-[10px] tracking-[0.3em] text-bone/40 transition-[transform,color] duration-150 ease-out hover:text-amber focus-visible:text-amber active:scale-[0.97] md:text-[11px]"
           >
             CLEAR
           </button>

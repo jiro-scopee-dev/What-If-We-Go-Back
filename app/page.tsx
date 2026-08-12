@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { MotionConfig } from "framer-motion";
 import MuseumJourney from "@/components/MuseumJourney";
 import Exhibition from "@/components/Exhibition";
 import type { Phase } from "@/lib/types";
@@ -35,8 +36,10 @@ export default function Home() {
 
   return (
     <main className="relative">
-      <MuseumJourney phase={phase} onEnter={enter} />
-      <Exhibition phase={phase} onBack={back} />
+      <MotionConfig reducedMotion="user">
+        <MuseumJourney phase={phase} onEnter={enter} />
+        <Exhibition phase={phase} onBack={back} />
+      </MotionConfig>
     </main>
   );
 }
